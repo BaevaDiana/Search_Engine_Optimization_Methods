@@ -6,6 +6,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import time
 import numdifftools as nd
+from tkinter import scrolledtext
 
 # Определение функций, которые мы можем оптимизировать
 def target_function(x, y):
@@ -80,37 +81,64 @@ def run_optimization():
         ax.scatter([x0], [y0], [f1], color='red',s=10)
         results_text.insert(tk.END,
                            f"Шаг {k}: Координаты ({x0:.2f}, {y0:.2f}), Значение функции: {f1:.7f}\n")
-
+        results_text.yview_moveto(1)
         canvas.draw()
         root.update()
         time.sleep(delay)
 
     length=len(results)-1
-    # ax.scatter(results[length][0],results[length][1],results[length][3],color='black')
-    print(results)
-    print(length)
     ax.scatter(results[length][0], results[length][1], results[length][3], color='black',marker='x',s=60)
+    results_text.insert(tk.END,
+                        f"Результат:\nКоординаты ({results[length][0]:.8f}, {results[length][1]:.8f})\nЗначение функции: {results[length][3]:.8f}\n")
+    results_text.yview_moveto(1)
     results_text.config(state=tk.DISABLED)
 
 # Создание окна приложения
 root = tk.Tk()
 root.title("Градиентный спуск")
 
-# Создание интерфейса для параметров оптимизации
-param_frame = ttk.Frame(root)
-param_frame.pack(side=tk.LEFT, padx=10, pady=10)
+notebook = ttk.Notebook(root)
+notebook.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-ttk.Label(param_frame, text="X начальное").grid(row=1, column=0)
-ttk.Label(param_frame, text="Y начальное").grid(row=2, column=0)
-ttk.Label(param_frame, text="Шаг").grid(row=3, column=0)
-ttk.Label(param_frame, text="Число итераций").grid(row=4, column=0)
-ttk.Label(param_frame, text="Задержка (сек)").grid(row=5, column=0)
+# Вкладка для лр1
+param_frame = ttk.Frame(notebook)
+notebook.add(param_frame, text="ЛР1")
 
-x_var = tk.DoubleVar()
-y_var = tk.DoubleVar()
-step_var = tk.DoubleVar()
-iterations_var = tk.IntVar()
-delay_var = tk.DoubleVar()
+param_frame2 = ttk.Frame(notebook)
+notebook.add(param_frame2, text="ЛР2")
+
+param_frame3 = ttk.Frame(notebook)
+notebook.add(param_frame3, text="ЛР3")
+
+param_frame4 = ttk.Frame(notebook)
+notebook.add(param_frame4, text="ЛР4")
+
+param_frame5 = ttk.Frame(notebook)
+notebook.add(param_frame5, text="ЛР5")
+
+param_frame6 = ttk.Frame(notebook)
+notebook.add(param_frame6, text="ЛР6")
+
+param_frame7 = ttk.Frame(notebook)
+notebook.add(param_frame7, text="ЛР7")
+
+param_frame8 = ttk.Frame(notebook)
+notebook.add(param_frame8, text="ЛР8")
+
+
+# Параметры задачи
+ttk.Label(param_frame, text="Инициализация значений", font=("Helvetica", 12)).grid(row=0, column=0,pady=20)
+ttk.Label(param_frame, text="X начальное", font=("Helvetica", 10)).grid(row=1, column=0)
+ttk.Label(param_frame, text="Y начальное", font=("Helvetica", 10)).grid(row=2, column=0)
+ttk.Label(param_frame, text="Шаг", font=("Helvetica", 10)).grid(row=3, column=0)
+ttk.Label(param_frame, text="Число итераций", font=("Helvetica", 10)).grid(row=4, column=0)
+ttk.Label(param_frame, text="Задержка (сек)", font=("Helvetica", 10)).grid(row=5, column=0)
+
+x_var = tk.DoubleVar(value=-1)
+y_var = tk.DoubleVar(value=-1)
+step_var = tk.DoubleVar(value=0.5)
+iterations_var = tk.IntVar(value=100)
+delay_var = tk.DoubleVar(value=0.5)
 
 x_entry = ttk.Entry(param_frame, textvariable=x_var)
 y_entry = ttk.Entry(param_frame, textvariable=y_var)
@@ -124,45 +152,26 @@ step_entry.grid(row=3, column=1)
 iterations_entry.grid(row=4, column=1)
 delay_entry.grid(row=5, column=1)
 
-
-ttk.Label(param_frame, text="Выполнение и результаты").grid(row=20, column=1)
-results_text = tk.Text(param_frame, wrap=tk.WORD, height=10, width=40, state=tk.DISABLED)
-results_text.grid(row=21, column=1)
-
-# Инициализация графика при запуске программы
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-
-x_range = np.linspace(-10, 10, 100)
-y_range = np.linspace(-10, 10, 100)
-X, Y = np.meshgrid(x_range, y_range)
-Z = target_function(X, Y)
-
-canvas = FigureCanvasTkAgg(fig, master=root)
-canvas_widget = canvas.get_tk_widget()
-canvas_widget.pack(side=tk.RIGHT, padx=20, pady=10)
-
-
-ttk.Label(param_frame, text="Функция и отображение ее графика").grid(row=9, column=0)
-ttk.Label(param_frame, text="Выберите функцию").grid(row=10, column=0)
+# Параметры функции
+ttk.Label(param_frame, text="Функция и отображение ее графика", font=("Helvetica", 12)).grid(row=9, column=0,pady=20)
+ttk.Label(param_frame, text="Выберите функцию", font=("Helvetica", 10)).grid(row=10, column=0)
 function_choices = ["Функция Химмельблау"]
 function_var = tk.StringVar(value=function_choices[0])
-function_menu = ttk.Combobox(param_frame, textvariable=function_var, values=function_choices)
-function_menu.grid(row=10, column=1)
-ttk.Label(param_frame, text="X интервал (min)").grid(row=11, column=0)
-ttk.Label(param_frame, text="X интервал (max)").grid(row=12, column=0)
-ttk.Label(param_frame, text="Y интервал (min)").grid(row=13, column=0)
-ttk.Label(param_frame, text="Y интервал (max)").grid(row=14, column=0)
-ttk.Label(param_frame, text="Ось X интервал").grid(row=16, column=0)
-ttk.Label(param_frame, text="Ось Y интервал").grid(row=17, column=0)
+function_menu = ttk.Combobox(param_frame, textvariable=function_var, values=function_choices,width=25)
+function_menu.grid(row=10, column=1,pady=8)
+ttk.Label(param_frame, text="X интервал (min)", font=("Helvetica", 10)).grid(row=11, column=0)
+ttk.Label(param_frame, text="X интервал (max)", font=("Helvetica", 10)).grid(row=12, column=0)
+ttk.Label(param_frame, text="Y интервал (min)", font=("Helvetica", 10)).grid(row=13, column=0)
+ttk.Label(param_frame, text="Y интервал (max)", font=("Helvetica", 10)).grid(row=14, column=0)
+ttk.Label(param_frame, text="Ось X интервал", font=("Helvetica", 10)).grid(row=16, column=0)
+ttk.Label(param_frame, text="Ось Y интервал", font=("Helvetica", 10)).grid(row=17, column=0)
 
-x_interval_min = tk.DoubleVar()
-x_interval_max = tk.DoubleVar()
-y_interval_min = tk.DoubleVar()
-y_interval_max = tk.DoubleVar()
-z_scale = tk.DoubleVar()
-x_axis_interval = tk.IntVar()
-y_axis_interval = tk.IntVar()
+x_interval_min = tk.DoubleVar(value=-5)
+x_interval_max = tk.DoubleVar(value=5)
+y_interval_min = tk.DoubleVar(value=-5)
+y_interval_max = tk.DoubleVar(value=5)
+x_axis_interval = tk.IntVar(value=2)
+y_axis_interval = tk.IntVar(value=2)
 
 x_interval_min_entry = ttk.Entry(param_frame, textvariable=x_interval_min)
 x_interval_max_entry = ttk.Entry(param_frame, textvariable=x_interval_max)
@@ -178,8 +187,23 @@ y_interval_max_entry.grid(row=14, column=1)
 x_axis_interval_entry.grid(row=16, column=1)
 y_axis_interval_entry.grid(row=17, column=1)
 
-# Создание кнопки "Применить"
-apply_settings_button = ttk.Button(param_frame, text="Выполнить", command=run_optimization)
-apply_settings_button.grid(row=7, column=0, columnspan=2)
+# Создание кнопки Выполнить
+button_style = ttk.Style()
+button_style.configure("My.TButton", font=("Helvetica", 14))
+
+# Создание кнопки Выполнить
+apply_settings_button = ttk.Button(param_frame, text="Выполнить", command=run_optimization, style="My.TButton")
+apply_settings_button.grid(row=21, column=1, padx=10, pady=10)
+
+ttk.Label(param_frame, text="Выполнение и результаты", font=("Helvetica", 12)).grid(row=20, column=0,pady=20)
+results_text = scrolledtext.ScrolledText(param_frame, wrap=tk.WORD, height=18, width=40,padx=2, state=tk.DISABLED)
+results_text.grid(row=21, column=0,padx=10)
+
+# Инициализация графика при запуске программы
+fig = plt.figure(figsize=(8, 9))  # Установка размеров фигуры (ширина, высота)
+ax = fig.add_subplot(111, projection='3d')
+canvas = FigureCanvasTkAgg(fig, master=root)
+canvas_widget = canvas.get_tk_widget()
+canvas_widget.pack(side=tk.RIGHT, padx=20)
 
 root.mainloop()
