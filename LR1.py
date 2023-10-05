@@ -10,7 +10,7 @@ import numdifftools as nd
 # Определение функций, которые мы можем оптимизировать
 def target_function(x, y):
     result = ((x ** 2 + y - 11) ** 2) + ((x + y ** 2 - 7) ** 2)
-    return np.round(result, 6)
+    return result
 
 # Определение функции для обновления графика функции
 def update_function_plot():
@@ -95,8 +95,8 @@ def run_optimization():
         else:
             x0, y0 = x1, y1
 
-        results.append((x0, y0, k, round(f1,5)))
-        ax.scatter([x0], [y0], [round(f1,5)], color='red')
+        results.append((x0, y0, k, f1))
+        ax.scatter([x0], [y0], [f1], color='red')
 
         canvas.draw()
         root.update()
