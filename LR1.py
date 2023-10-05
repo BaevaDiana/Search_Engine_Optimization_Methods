@@ -47,6 +47,7 @@ def run_optimization():
     ax.set_zlabel('Z')
     ax.set_xticks(np.arange(x_interval_min.get(), x_interval_max.get() + 1, x_axis_interval.get()))
     ax.set_yticks(np.arange(y_interval_min.get(), y_interval_max.get() + 1, y_axis_interval.get()))
+    ax.set_title("Алгоритм градиентного спуска с постоянным шагом")
 
     function_choice = function_var.get()
     if function_choice == "Функция Химмельблау":
@@ -95,13 +96,13 @@ def run_optimization():
 
 # Создание окна приложения
 root = tk.Tk()
-root.title("Градиентный спуск")
+root.title("Методы поисковой оптимизации")
 
 notebook = ttk.Notebook(root)
 notebook.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
 # Вкладка для лр1
-param_frame = ttk.Frame(notebook)
+param_frame = ttk.Frame(notebook,padding=(15, 0))
 notebook.add(param_frame, text="ЛР1")
 
 param_frame2 = ttk.Frame(notebook)
@@ -127,7 +128,7 @@ notebook.add(param_frame8, text="ЛР8")
 
 
 # Параметры задачи
-ttk.Label(param_frame, text="Инициализация значений", font=("Helvetica", 12)).grid(row=0, column=0,pady=20)
+ttk.Label(param_frame, text="Инициализация значений", font=("Helvetica", 12)).grid(row=0, column=0,pady=15)
 ttk.Label(param_frame, text="X начальное", font=("Helvetica", 10)).grid(row=1, column=0)
 ttk.Label(param_frame, text="Y начальное", font=("Helvetica", 10)).grid(row=2, column=0)
 ttk.Label(param_frame, text="Шаг", font=("Helvetica", 10)).grid(row=3, column=0)
@@ -152,19 +153,25 @@ step_entry.grid(row=3, column=1)
 iterations_entry.grid(row=4, column=1)
 delay_entry.grid(row=5, column=1)
 
+separator = ttk.Separator(param_frame, orient="horizontal")  # Горизонтальная полоса разделения
+separator.grid(row=7, column=0, columnspan=2, sticky="ew",pady=10)
+
 # Параметры функции
-ttk.Label(param_frame, text="Функция и отображение ее графика", font=("Helvetica", 12)).grid(row=9, column=0,pady=20)
+ttk.Label(param_frame, text="Функция и отображение ее графика", font=("Helvetica", 12)).grid(row=9, column=0,pady=10)
 ttk.Label(param_frame, text="Выберите функцию", font=("Helvetica", 10)).grid(row=10, column=0)
 function_choices = ["Функция Химмельблау"]
 function_var = tk.StringVar(value=function_choices[0])
-function_menu = ttk.Combobox(param_frame, textvariable=function_var, values=function_choices,width=25)
-function_menu.grid(row=10, column=1,pady=8)
+function_menu = ttk.Combobox(param_frame, textvariable=function_var, values=function_choices,width=22)
+function_menu.grid(row=10, column=1,pady=5)
 ttk.Label(param_frame, text="X интервал (min)", font=("Helvetica", 10)).grid(row=11, column=0)
 ttk.Label(param_frame, text="X интервал (max)", font=("Helvetica", 10)).grid(row=12, column=0)
 ttk.Label(param_frame, text="Y интервал (min)", font=("Helvetica", 10)).grid(row=13, column=0)
 ttk.Label(param_frame, text="Y интервал (max)", font=("Helvetica", 10)).grid(row=14, column=0)
 ttk.Label(param_frame, text="Ось X интервал", font=("Helvetica", 10)).grid(row=16, column=0)
 ttk.Label(param_frame, text="Ось Y интервал", font=("Helvetica", 10)).grid(row=17, column=0)
+
+separator = ttk.Separator(param_frame, orient="horizontal")  # Горизонтальная полоса разделения
+separator.grid(row=18, column=0,columnspan=2, sticky="ew",pady=10)
 
 x_interval_min = tk.DoubleVar(value=-5)
 x_interval_max = tk.DoubleVar(value=5)
@@ -195,13 +202,14 @@ button_style.configure("My.TButton", font=("Helvetica", 14))
 apply_settings_button = ttk.Button(param_frame, text="Выполнить", command=run_optimization, style="My.TButton")
 apply_settings_button.grid(row=21, column=1, padx=10, pady=10)
 
-ttk.Label(param_frame, text="Выполнение и результаты", font=("Helvetica", 12)).grid(row=20, column=0,pady=20)
+ttk.Label(param_frame, text="Выполнение и результаты", font=("Helvetica", 12)).grid(row=20, column=0,pady=10)
 results_text = scrolledtext.ScrolledText(param_frame, wrap=tk.WORD, height=18, width=40,padx=2, state=tk.DISABLED)
 results_text.grid(row=21, column=0,padx=10)
 
 # Инициализация графика при запуске программы
 fig = plt.figure(figsize=(8, 9))  # Установка размеров фигуры (ширина, высота)
 ax = fig.add_subplot(111, projection='3d')
+ax.set_title("Алгоритм градиентного спуска с постоянным шагом")
 canvas = FigureCanvasTkAgg(fig, master=root)
 canvas_widget = canvas.get_tk_widget()
 canvas_widget.pack(side=tk.RIGHT, padx=20)
