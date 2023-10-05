@@ -2,13 +2,12 @@ import tkinter as tk
 from tkinter import ttk
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import time
 import numdifftools as nd
 from tkinter import scrolledtext
 
-# Определение функций, которые мы можем оптимизировать
+# Функция Химмельблау
 def target_function(x, y):
     return ((x ** 2 + y - 11) ** 2) + ((x + y ** 2 - 7) ** 2)
 
@@ -30,18 +29,24 @@ def partial_function(f___, input, pos, value):
 
 # Функция, которая будет выполнена при нажатии кнопки "Выполнить"
 def run_optimization():
+    # Получение параметров оптимизации из пользовательского ввода
     x0 = x_var.get()
     y0 = y_var.get()
     step = step_var.get()
     max_iterations = iterations_var.get()
     delay = delay_var.get()
 
+    # Очистка текущего графика
     ax.cla()
+
+    # Генерация сетки для графика целевой функции
     x_range = np.linspace(x_interval_min.get(), x_interval_max.get(), 100)
     y_range = np.linspace(y_interval_min.get(), y_interval_max.get(), 100)
     X, Y = np.meshgrid(x_range, y_range)
     Z = target_function(X, Y)
-    ax.plot_surface(X, Y, Z, cmap='viridis',alpha=0.7)
+
+    # Построение поверхности графика целевой функции
+    ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.7)
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
@@ -49,37 +54,48 @@ def run_optimization():
     ax.set_yticks(np.arange(y_interval_min.get(), y_interval_max.get() + 1, y_axis_interval.get()))
     ax.set_title("Алгоритм градиентного спуска с постоянным шагом")
 
+    # Выбор целевой функции
     function_choice = function_var.get()
     if function_choice == "Функция Химмельблау":
         target_func = target_function
 
+    # Инициализация списка для хранения результатов оптимизации
     results = []
+
+    # Вывод результатов в текстовое поле
     results_text.config(state=tk.NORMAL)
     results_text.delete(1.0, tk.END)
+
+    # Основной цикл оптимизации
     for k in range(max_iterations):
         (gx, gy) = gradient(target_func, [x0, y0])
 
+        # Проверка условия остановки
         if np.linalg.norm((gx, gy)) < 0.0001:
             break
 
+        # Обновление координат с учетом шага
         x1, y1 = x0 - step * gx, y0 - step * gy
         f1 = target_func(x1, y1)
         f0 = target_func(x0, y0)
 
+        # Уменьшение шага, если значение функции не уменьшилось
         while not f1 < f0:
             step = step / 2
             x1, y1 = x0 - step * gx, y0 - step * gy
             f1 = target_func(x1, y1)
             f0 = target_func(x0, y0)
 
+        # Проверка на сходимость
         if np.sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2) < 0.0001 and abs(f1 - f0) < 0.0001:
             x0, y0 = x1, y1
             break
         else:
             x0, y0 = x1, y1
 
-        results.append((x0, y0, k,f1))
-        ax.scatter([x0], [y0], [f1], color='red',s=10)
+        # Сохранение результатов и обновление графика
+        results.append((x0, y0, k, f1))
+        ax.scatter([x0], [y0], [f1], color='red', s=10)
         results_text.insert(tk.END,
                            f"Шаг {k}: Координаты ({x0:.2f}, {y0:.2f}), Значение функции: {f1:.7f}\n")
         results_text.yview_moveto(1)
@@ -87,8 +103,9 @@ def run_optimization():
         root.update()
         time.sleep(delay)
 
-    length=len(results)-1
-    ax.scatter(results[length][0], results[length][1], results[length][3], color='black',marker='x',s=60)
+    # Вывод окончательного результата
+    length = len(results) - 1
+    ax.scatter(results[length][0], results[length][1], results[length][3], color='black', marker='x', s=60)
     results_text.insert(tk.END,
                         f"Результат:\nКоординаты ({results[length][0]:.8f}, {results[length][1]:.8f})\nЗначение функции: {results[length][3]:.8f}\n")
     results_text.yview_moveto(1)
