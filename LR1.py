@@ -1,13 +1,11 @@
 import tkinter as tk
 from tkinter import ttk
 import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import time
 import numdifftools as nd
 from tkinter import scrolledtext
 
-def GradientDescentAlgorithm(frame,root):
+def GradientDescentAlgorithm(frame,root,ax,canvas):
     # Функция Химмельблау
     def target_function(x, y):
         return ((x ** 2 + y - 11) ** 2) + ((x + y ** 2 - 7) ** 2)
@@ -194,12 +192,3 @@ def GradientDescentAlgorithm(frame,root):
     ttk.Label(param_frame, text="Выполнение и результаты", font=("Helvetica", 12)).grid(row=20, column=0,pady=10)
     results_text = scrolledtext.ScrolledText(param_frame, wrap=tk.WORD, height=18, width=40,padx=2, state=tk.DISABLED)
     results_text.grid(row=21, column=0,padx=10)
-
-    # Инициализация графика при запуске программы
-    fig = plt.figure(figsize=(8, 9))  # Установка размеров фигуры (ширина, высота)
-    ax = fig.add_subplot(111, projection='3d')
-    ax.set_title("Алгоритм градиентного спуска с постоянным шагом")
-    canvas = FigureCanvasTkAgg(fig, master=root)
-    canvas_widget = canvas.get_tk_widget()
-    canvas_widget.pack(side=tk.RIGHT, padx=20)
-
