@@ -1,14 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
-import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import time
-import numdifftools as nd
-from tkinter import scrolledtext
 from LR1 import GradientDescentAlgorithm
 from LR2 import Simplex_method
-from scipy.optimize import minimize
+from LR3 import GeneticAlgorithm
 
 
 # Создание окна приложения
@@ -38,6 +34,8 @@ Simplex_method(param_frame2,root,ax,canvas)
 
 param_frame3 = ttk.Frame(notebook)
 notebook.add(param_frame3, text="ЛР3")
+
+GeneticAlgorithm(param_frame3,root,ax,canvas)
 
 param_frame4 = ttk.Frame(notebook)
 notebook.add(param_frame4, text="ЛР4")
