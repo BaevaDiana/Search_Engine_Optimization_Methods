@@ -36,23 +36,11 @@ def GeneticAlgorithm(frame,root,ax,canvas):
 
         def run_optimization():
 
-            # Очистка текущего графика
-            ax.cla()
-
             # Генерация сетки для графика целевой функции
             x_range = np.linspace(x_interval_min.get(), x_interval_max.get(), 100)
             y_range = np.linspace(y_interval_min.get(), y_interval_max.get(), 100)
             X, Y = np.meshgrid(x_range, y_range)
             Z = target_function(X, Y)
-
-            # Построение поверхности графика целевой функции
-            ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.7)
-            ax.set_xlabel('X')
-            ax.set_ylabel('Y')
-            ax.set_zlabel('Z')
-            ax.set_xticks(np.arange(x_interval_min.get(), x_interval_max.get() + 1, x_axis_interval.get()))
-            ax.set_yticks(np.arange(y_interval_min.get(), y_interval_max.get() + 1, y_axis_interval.get()))
-            ax.set_title("Генетический алгоритм")
 
             population_size=int(x_var.get())
             num_generations=int(y_var.get())
@@ -62,6 +50,7 @@ def GeneticAlgorithm(frame,root,ax,canvas):
             results_text.config(state=tk.NORMAL)
             results_text.delete(1.0, tk.END)
             for generation in range(num_generations):
+
                 # Расчет значений функции для текущей популяции
                 fitness_scores = np.array([rosenbrock_function(x, y) for x, y in population])
 
@@ -87,8 +76,23 @@ def GeneticAlgorithm(frame,root,ax,canvas):
                 # Вывод лучшего решения на текущей итерации
                 print(f"Поколение {generation}: Лучшее решение - {best_individual}, Значение функции - {best_fitness}")
 
+                ax.cla()
+
+                # Построение поверхности графика целевой функции
+                ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.7)
+                ax.set_xlabel('X')
+                ax.set_ylabel('Y')
+                ax.set_zlabel('Z')
+                ax.set_xticks(np.arange(x_interval_min.get(), x_interval_max.get() + 1, x_axis_interval.get()))
+                ax.set_yticks(np.arange(y_interval_min.get(), y_interval_max.get() + 1, y_axis_interval.get()))
+                ax.set_title("Генетический алгоритм")
+
+                for i in range(len(fitness_scores)):
+                    best_individual = population[i]
+                    ax.scatter(best_individual[0], best_individual[1], fitness_scores[i], color='red',
+                                                s=10)
+
                 results.append((best_individual[0], best_individual[1], generation, best_fitness))
-                ax.scatter(best_individual[0], best_individual[1], best_fitness, color='red', s=10)
                 results_text.insert(tk.END,
                                     f"Поколение {generation}: Лучшее решение ({best_individual[0]:.2f}, {best_individual[1]:.2f}), Значение функции: {best_fitness:.7f}\n")
                 results_text.yview_moveto(1)
