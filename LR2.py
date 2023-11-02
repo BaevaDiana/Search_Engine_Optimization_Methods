@@ -78,7 +78,6 @@ def Simplex_method(frame,root,ax,canvas):
                         x_cs.append(point[0])
                         y_cs.append(point[1])
                         z_cs.append(point[2])
-                        print(point)
 
                         # Сохранение результатов и обновление графика
                         results.append((point[0], point[1], i, point[2]))
@@ -108,8 +107,8 @@ def Simplex_method(frame,root,ax,canvas):
         ttk.Label(param_frame2, text="Y начальное", font=("Helvetica", 10)).grid(row=2, column=0)
 
 
-        x_var = tk.DoubleVar(value=10)
-        y_var = tk.DoubleVar(value=10)
+        x_var = tk.DoubleVar(value=20)
+        y_var = tk.DoubleVar(value=20)
         delay_var = tk.DoubleVar(value=0.5)
 
         x_entry = ttk.Entry(param_frame2, textvariable=x_var)
