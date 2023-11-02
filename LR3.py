@@ -66,16 +66,6 @@ def GeneticAlgorithm(frame,root,ax,canvas):
                     child2 = mutate(child2, mutation_rate=0.1)
                     children.extend([child1, child2])
 
-                # Обновление популяции
-                population = np.array(children)
-
-                # Нахождение лучшей особи на текущей итерации
-                best_fitness = np.min(fitness_scores)
-                best_individual = population[np.argmin(fitness_scores)]
-
-                # Вывод лучшего решения на текущей итерации
-                print(f"Поколение {generation}: Лучшее решение - {best_individual}, Значение функции - {best_fitness}")
-
                 ax.cla()
 
                 # Построение поверхности графика целевой функции
@@ -90,7 +80,19 @@ def GeneticAlgorithm(frame,root,ax,canvas):
                 for i in range(len(fitness_scores)):
                     best_individual = population[i]
                     ax.scatter(best_individual[0], best_individual[1], fitness_scores[i], color='red',
-                                                s=10)
+                               s=10)
+
+                # Обновление популяции
+                population = np.array(children)
+
+                # Нахождение лучшей особи на текущей итерации
+                best_fitness = np.min(fitness_scores)
+                best_individual = population[np.argmin(fitness_scores)]
+
+                # Вывод лучшего решения на текущей итерации
+                print(f"Поколение {generation}: Лучшее решение - {best_individual}, Значение функции - {best_fitness}")
+
+
 
                 results.append((best_individual[0], best_individual[1], generation, best_fitness))
                 results_text.insert(tk.END,
