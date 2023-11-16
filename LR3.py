@@ -1,15 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
-import numpy as np
-import time
 from tkinter import scrolledtext
-from scipy.optimize import minimize
 import numpy as np
 
 
 def GeneticAlgorithm(frame,root,ax,canvas):
-        def target_function(x, y):
-            return (1-x)**2+100*(y-x**2)**2
 
         # Функция Розенброка для оптимизации
         def rosenbrock_function(x, y):
@@ -35,22 +30,22 @@ def GeneticAlgorithm(frame,root,ax,canvas):
 
 
         def run_optimization():
-
             # Генерация сетки для графика целевой функции
             x_range = np.linspace(x_interval_min.get(), x_interval_max.get(), 100)
             y_range = np.linspace(y_interval_min.get(), y_interval_max.get(), 100)
             X, Y = np.meshgrid(x_range, y_range)
-            Z = target_function(X, Y)
+            Z = rosenbrock_function(X, Y)
 
             population_size=int(x_var.get())
             num_generations=int(y_var.get())
+            #рандомно задаем популяцию от -5 до 5
             population = np.random.uniform(low=-5, high=5, size=(population_size, 2))
 
+            #для записи результатов
             results = []
             results_text.config(state=tk.NORMAL)
             results_text.delete(1.0, tk.END)
             for generation in range(num_generations):
-
                 # Расчет значений функции для текущей популяции
                 fitness_scores = np.array([rosenbrock_function(x, y) for x, y in population])
 
@@ -67,7 +62,6 @@ def GeneticAlgorithm(frame,root,ax,canvas):
                     children.extend([child1, child2])
 
                 ax.cla()
-
                 # Построение поверхности графика целевой функции
                 ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.7)
                 ax.set_xlabel('X')
@@ -91,8 +85,6 @@ def GeneticAlgorithm(frame,root,ax,canvas):
 
                 # Вывод лучшего решения на текущей итерации
                 print(f"Поколение {generation}: Лучшее решение - {best_individual}, Значение функции - {best_fitness}")
-
-
 
                 results.append((best_individual[0], best_individual[1], generation, best_fitness))
                 results_text.insert(tk.END,
