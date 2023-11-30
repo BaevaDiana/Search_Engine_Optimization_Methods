@@ -3,6 +3,53 @@ from tkinter import ttk
 from tkinter import scrolledtext
 import numpy as np
 import math
+from LR4.particleswarm.swarm import Swarm
+import numpy
+
+
+class Swarm_Rastrigin (Swarm):
+    def __init__ (self,
+            swarmsize,
+            minvalues,
+            maxvalues,
+            currentVelocityRatio,
+            localVelocityRatio,
+            globalVelocityRatio):
+       Swarm.__init__ (self,
+            swarmsize,
+            minvalues,
+            maxvalues,
+            currentVelocityRatio,
+            localVelocityRatio,
+            globalVelocityRatio)
+
+
+    def _finalFunc (self, position):
+        function = 10.0 * len (self.minvalues) + sum (position * position - 10.0 * numpy.cos (2 * numpy.pi * position) )
+        penalty = self._getPenalty (position, 10000.0)
+
+        return function + penalty
+
+
+
+# инерция
+# альфа
+# бетта
+
+def printResult (swarm, iteration):
+    template = u"""Iteration: {iter}
+
+Best Position: {bestpos}
+Best Final Func: {finalfunc}
+----------------------------
+"""
+
+    result = template.format (iter = iteration,
+            bestpos = swarm.globalBestPosition,
+            finalfunc = swarm.globalBestFinalFunc)
+
+    return result
+
 
 def ParticleSwarmAlgorithm(frame,root,ax,canvas):
 
@@ -38,62 +85,61 @@ def ParticleSwarmAlgorithm(frame,root,ax,canvas):
             X, Y = np.meshgrid(X, Y)
             Z = rastrigin(X, Y)
 
-            # population_size=int(10)
-            # num_generations=int(10)
-            # #рандомно задаем популяцию от -5 до 5
-            # population = np.random.uniform(low=-5, high=5, size=(population_size, 2))
+
+            iterCount = iteration.get()
+            dimension = 3
+            swarmsize = particle.get()
+            minvalues = numpy.array ([-5.12] * dimension)
+            maxvalues = numpy.array ([5.12] * dimension)
+
+            currentVelocityRatio = inertia.get()
+            localVelocityRatio = alpha.get()
+            globalVelocityRatio = beta.get()
+
+            swarm = Swarm_Rastrigin(swarmsize,
+                                    minvalues,
+                                    maxvalues,
+                                    currentVelocityRatio,
+                                    localVelocityRatio,
+                                    globalVelocityRatio
+                                    )
+
 
             #для записи результатов
             results = []
             results_text.config(state=tk.NORMAL)
             results_text.delete(1.0, tk.END)
-            # for generation in range(num_generations):
-                # Расчет значений функции для текущей популяции
-                # fitness_scores = np.array([rastrigin(x, y) for x, y in population])
 
-                # Выбор лучших особей
-                # selected_individuals = selection(population, fitness_scores)
-                #
-                # # Оператор кроссовера и мутации
-                # children = []
-                # for i in range(0, population_size, 2):
-                #     child1 = crossover(selected_individuals[0], selected_individuals[1])
-                #     child2 = crossover(selected_individuals[1], selected_individuals[0])
-                #     child1 = mutate(child1, mutation_rate=0.1)  # Пример вероятности мутации
-                #     child2 = mutate(child2, mutation_rate=0.1)
-                #     children.extend([child1, child2])
-
-            ax.cla()
-            # Построение поверхности графика целевой функции
-            ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.7)
-            ax.set_xlabel('X')
-            ax.set_ylabel('Y')
-            ax.set_zlabel('Z')
-            ax.set_xticks(np.arange(x_interval_min.get(), x_interval_max.get() + 1, x_axis_interval.get()))
-            ax.set_yticks(np.arange(y_interval_min.get(), y_interval_max.get() + 1, y_axis_interval.get()))
-            ax.set_title("Алгоритм Роя Частиц")
+            for n in range(iterCount):
+                ax.cla()
+                # Построение поверхности графика целевой функции
+                ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.7)
+                ax.set_xlabel('X')
+                ax.set_ylabel('Y')
+                ax.set_zlabel('Z')
+                ax.set_xticks(np.arange(x_interval_min.get(), x_interval_max.get() + 1, x_axis_interval.get()))
+                ax.set_yticks(np.arange(y_interval_min.get(), y_interval_max.get() + 1, y_axis_interval.get()))
+                ax.set_title("Алгоритм Роя Частиц")
 
                 # for i in range(len(fitness_scores)):
                 #     best_individual = population[i]
-                #     ax.scatter(best_individual[0], best_individual[1], fitness_scores[i], color='red',
-                #                s=10)
-                #
-                # # Обновление популяции
-                # population = np.array(children)
-                #
-                # # Нахождение лучшей особи на текущей итерации
-                # best_fitness = np.min(fitness_scores)
-                # best_individual = population[np.argmin(fitness_scores)]
-                #
-                # # Вывод лучшего решения на текущей итерации
-                # print(f"Поколение {generation}: Лучшее решение - {best_individual}, Значение функции - {best_fitness}")
-                #
-                # results.append((best_individual[0], best_individual[1], generation, best_fitness))
-                # results_text.insert(tk.END,
-                #                     f"Поколение {generation}: Лучшее решение ({best_individual[0]:.2f}, {best_individual[1]:.2f}), Значение функции: {best_fitness:.7f}\n")
-                # results_text.yview_moveto(1)
-            canvas.draw()
-            root.update()
+                ax.scatter(swarm[0].position[0], swarm[0].position[1], swarm[0].position[2], color='red',
+                               s=10)
+                # print("Position", swarm[0].position)
+                # print("Velocity", swarm[0].velocity)
+
+                # print(printResult(swarm, n))
+
+                results_text.insert(tk.END,
+                                    f"Position {swarm[0].position}")
+                results_text.insert(tk.END,
+                                    f"Velocity {swarm[0].velocity}")
+                # ax.scatter(best_solution[0], best_solution[1], best_fitness_value, color='black', marker='x', s=60)
+                results_text.insert(tk.END,printResult(swarm, n))
+                swarm.nextIteration()
+                results_text.yview_moveto(1)
+                canvas.draw()
+                root.update()
 
 
             # # Нахождение лучшего решения после всех итераций
@@ -121,10 +167,10 @@ def ParticleSwarmAlgorithm(frame,root,ax,canvas):
         ttk.Label(param_frame2, text="Задержка", font=("Helvetica", 10)).grid(row=6, column=0)
 
         #частиц
-        particle = tk.DoubleVar(value=10)
-        iteration = tk.DoubleVar(value=50)
-        alpha=tk.DoubleVar(value=0.8)
-        beta=tk.DoubleVar(value=0.9)
+        particle = tk.IntVar(value=2000)
+        iteration = tk.IntVar(value=100)
+        alpha=tk.IntVar(value=2)
+        beta=tk.IntVar(value=5)
         inertia=tk.DoubleVar(value=0.5)
         delay=tk.DoubleVar(value=0.1)
 
@@ -195,5 +241,5 @@ def ParticleSwarmAlgorithm(frame,root,ax,canvas):
         ttk.Label(param_frame2, text="Выполнение и результаты", font=("Helvetica", 12)).grid(row=20, column=0, pady=10)
         results_text = scrolledtext.ScrolledText(param_frame2, wrap=tk.WORD, height=18, width=40, padx=2, state=tk.DISABLED)
         results_text.grid(row=21, column=0, padx=10)
-        root.mainloop()
+        # root.mainloop()
 

@@ -130,7 +130,7 @@ def GeneticAlgorithm(frame,root,ax,canvas):
         # Параметры функции
         ttk.Label(param_frame2, text="Функция и отображение ее графика", font=("Helvetica", 12)).grid(row=9, column=0, pady=10)
         ttk.Label(param_frame2, text="Выберите функцию", font=("Helvetica", 10)).grid(row=10, column=0)
-        function_choices = ["2x^2+3y^2+4xy-6x-3y"]
+        function_choices = ["Функция Розенброка"]
         function_var = tk.StringVar(value=function_choices[0])
         function_menu = ttk.Combobox(param_frame2, textvariable=function_var, values=function_choices, width=22)
         function_menu.grid(row=10, column=1, pady=5)

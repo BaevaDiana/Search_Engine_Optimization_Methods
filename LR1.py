@@ -4,6 +4,7 @@ import numpy as np
 import time
 import numdifftools as nd
 from tkinter import scrolledtext
+from LR4.particleswarm.particle import Particle
 
 def GradientDescentAlgorithm(frame,root,ax,canvas):
     # Функция Химмельблау
