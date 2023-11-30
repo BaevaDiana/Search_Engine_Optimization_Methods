@@ -172,8 +172,8 @@ def BeesAlgorithm(frame,root,ax,canvas):
         apply_settings_button = ttk.Button(param_frame2, text="Выполнить",command=run_optimization, style="My.TButton")
         apply_settings_button.grid(row=21, column=1, padx=10, pady=10)
 
-        ttk.Label(param_frame2, text="Выполнение и результаты", font=("Helvetica", 12)).grid(row=20, column=0, pady=10)
-        results_text = scrolledtext.ScrolledText(param_frame2, wrap=tk.WORD, height=18, width=40, padx=2, state=tk.DISABLED)
+        ttk.Label(param_frame2, text="Выполнение и результаты", font=("Helvetica", 12)).grid(row=18, column=0, pady=10)
+        results_text = scrolledtext.ScrolledText(param_frame2, wrap=tk.WORD, height=16, width=40, padx=2, state=tk.DISABLED)
         results_text.grid(row=21, column=0, padx=10)
         root.mainloop()
 
