@@ -55,22 +55,13 @@ def BeesAlgorithm(frame,root,ax,canvas):
                 for j in range(X.shape[1]):
                     Z[i, j] = target_func(np.array([X[i, j], Y[i, j]]))
 
-            ax.cla()
-            canvas.draw()
-            ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.7)
-            ax.set_xlabel('X')
-            ax.set_ylabel('Y')
-            ax.set_zlabel('Z')
-            ax.set_xticks(np.arange(bound_start, bound_end + 1, 2))
-            ax.set_yticks(np.arange(bound_start, bound_end + 1, 2))
-
 
             results_text.config(state=tk.NORMAL)
             results_text.delete(1.0, tk.END)
             algorithm = BeeAlgorithm(scout, size_A, size_A, best_A, perspective_A,
                                      perspective_B, best_B, bounds, iterations, 20,
                                      target_func)
-            algorithm.set_options(root, ax, canvas, results_text)
+            algorithm.set_options(root, ax, canvas, results_text,bound_start,bound_end,target_func)
             best_bee = algorithm.optimize()
             ax.scatter(best_bee.coords[0], best_bee.coords[1], best_bee.fitness, c="red")
             results_text.insert(tk.END,
@@ -87,7 +78,7 @@ def BeesAlgorithm(frame,root,ax,canvas):
         ttk.Label(param_frame2, text="Итераций", font=("Helvetica", 10)).grid(row=1, column=0)
         ttk.Label(param_frame2, text="Разведчики", font=("Helvetica", 10)).grid(row=2, column=0)
         ttk.Label(param_frame2, text="Пчел в перспективном участке", font=("Helvetica", 10)).grid(row=3, column=0)
-        ttk.Label(param_frame2, text="Пчел в улчшем участке", font=("Helvetica", 10)).grid(row=4, column=0)
+        ttk.Label(param_frame2, text="Пчел в лучшем участке", font=("Helvetica", 10)).grid(row=4, column=0)
         ttk.Label(param_frame2, text="Перспективных участков", font=("Helvetica", 10)).grid(row=5, column=0)
         ttk.Label(param_frame2, text="Лучших участков", font=("Helvetica", 10)).grid(row=6, column=0)
         ttk.Label(param_frame2, text="Размер участков", font=("Helvetica", 10)).grid(row=7, column=0)

@@ -34,11 +34,15 @@ class BeeAlgorithm:
         self.best_bees = []
         self.fitness_function = fitness_function
 
-    def set_options(self, root, ax, canvas, results_text):
+    def set_options(self, root, ax, canvas, results_text,bound_start,bound_end,target_func):
         self.canvas = canvas
         self.root = root
         self.ax = ax
         self.results_text = results_text
+        self.ax = ax
+        self.bound_start = bound_start
+        self.bound_end = bound_end
+        self.target_func = target_func
 
     def initialize_bees(self):
         bees = []
@@ -60,13 +64,34 @@ class BeeAlgorithm:
             bees = sorted(bees, key=lambda bee: bee.fitness)
             self.best_bees = bees[:self.num_elite]
 
+            x_range = np.linspace(self.bound_start, self.bound_end, 100)
+            y_range = np.linspace(self.bound_start, self.bound_end, 100)
+            X, Y = np.meshgrid(x_range, y_range)
+            Z = np.zeros_like(X)
+            for i in range(X.shape[0]):
+                for j in range(X.shape[1]):
+                    Z[i, j] = self.target_func(np.array([X[i, j], Y[i, j]]))
+
+            self.ax.cla()
+            self.canvas.draw()
+            self.ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.7)
+            self.ax.set_xlabel('X')
+            self.ax.set_ylabel('Y')
+            self.ax.set_zlabel('Z')
+            self.ax.set_xticks(np.arange(self.bound_start, self.bound_end + 1, 2))
+            self.ax.set_yticks(np.arange(self.bound_start, self.bound_end + 1, 2))
+
             for i in range(self.num_scouts):
                 # Исследование окружения для каждой пчелы-разведчика
                 self.explore(bees[i])
+                # print(bees[i].fitness,bees[i].coords[0],bees[i].coords[1])
+                self.ax.scatter(bees[i].coords[0], bees[i].coords[1], bees[i].fitness, color='black',
+                           s=10)
 
             # Выбор лучших пчел из текущей эпохи
             bees = self.select_best(bees)
 
+            # print(bees[i].fitness)
             # Проверка условия стагнации
             current_best_fitness = self.best_bees[0].fitness
             if current_best_fitness < best_fitness:
@@ -80,7 +105,7 @@ class BeeAlgorithm:
                 break
 
 
-            self.ax.scatter(self.best_bees[0].coords[0], self.best_bees[0].coords[1], self.best_bees[0].fitness, c="black")
+            # self.ax.scatter(self.best_bees[0].coords[0], self.best_bees[0].coords[1], self.best_bees[0].fitness, c="black")
             self.results_text.insert(tk.END,
                                 f"Итерация {epoch}: Лучшее решение ({self.best_bees[0].coords[0]:.8f}, {self.best_bees[0].coords[1]:.8f}, {self.best_bees[0].fitness:.8f})\n")
             self.canvas.draw()
