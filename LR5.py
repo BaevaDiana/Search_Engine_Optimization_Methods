@@ -81,15 +81,15 @@ def BeesAlgorithm(frame,root,ax,canvas):
             #         child2 = mutate(child2, mutation_rate=0.1)
             #         children.extend([child1, child2])
             #
-                ax.cla()
-                # Построение поверхности графика целевой функции
-                ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.7)
-                ax.set_xlabel('X')
-                ax.set_ylabel('Y')
-                ax.set_zlabel('Z')
-                ax.set_xticks(np.arange(x_interval_min.get(), x_interval_max.get() + 1, x_axis_interval.get()))
-                ax.set_yticks(np.arange(y_interval_min.get(), y_interval_max.get() + 1, y_axis_interval.get()))
-                ax.set_title("Генетический алгоритм")
+            ax.cla()
+            # Построение поверхности графика целевой функции
+            ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.7)
+            ax.set_xlabel('X')
+            ax.set_ylabel('Y')
+            ax.set_zlabel('Z')
+            ax.set_xticks(np.arange(x_interval_min.get(), x_interval_max.get() + 1, x_axis_interval.get()))
+            ax.set_yticks(np.arange(y_interval_min.get(), y_interval_max.get() + 1, y_axis_interval.get()))
+            ax.set_title("Генетический алгоритм")
 
             #     for i in range(len(fitness_scores)):
             #         best_individual = population[i]
