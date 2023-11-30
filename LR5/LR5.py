@@ -41,7 +41,6 @@ def BeesAlgorithm(frame,root,ax,canvas):
             perspective_A = int(perspective_a.get())
             best_A  = int(best_a.get())
             size_A = int(size_a.get())
-            Delay = int(delay.get())
 
             bound_start = float(x_interval_min.get())
             bound_end = float(x_interval_max.get())
@@ -92,7 +91,7 @@ def BeesAlgorithm(frame,root,ax,canvas):
         ttk.Label(param_frame2, text="Перспективных участков", font=("Helvetica", 10)).grid(row=5, column=0)
         ttk.Label(param_frame2, text="Лучших участков", font=("Helvetica", 10)).grid(row=6, column=0)
         ttk.Label(param_frame2, text="Размер участков", font=("Helvetica", 10)).grid(row=7, column=0)
-        ttk.Label(param_frame2, text="Задержка", font=("Helvetica", 10)).grid(row=8, column=0)
+        ttk.Label(param_frame2, text="Критерий останова", font=("Helvetica", 10)).grid(row=8, column=0)
 
 
         iteration = tk.IntVar(value=200)
@@ -102,7 +101,7 @@ def BeesAlgorithm(frame,root,ax,canvas):
         perspective_a  = tk.IntVar(value=3) #перпективных участков
         best_a = tk.IntVar(value=1)  # лучших участков
         size_a = tk.DoubleVar(value=0.5)  # размер участков
-        delay = tk.DoubleVar(value=0.03)  # задержка
+        stop = tk.DoubleVar(value=20)  # задержка
 
         iteration_entry = ttk.Entry(param_frame2, textvariable=iteration)
         scouts_entry = ttk.Entry(param_frame2, textvariable=scouts)
@@ -111,7 +110,7 @@ def BeesAlgorithm(frame,root,ax,canvas):
         perspective_a_entry = ttk.Entry(param_frame2, textvariable=perspective_a)
         best_a_entry = ttk.Entry(param_frame2, textvariable=best_a)
         size_a_entry = ttk.Entry(param_frame2, textvariable=size_a)
-        delay_entry = ttk.Entry(param_frame2, textvariable=delay)
+        stop_entry = ttk.Entry(param_frame2, textvariable=stop)
 
         iteration_entry.grid(row=1, column=1)
         scouts_entry.grid(row=2, column=1)
@@ -120,7 +119,7 @@ def BeesAlgorithm(frame,root,ax,canvas):
         perspective_a_entry.grid(row=5, column=1)
         best_a_entry.grid(row=6, column=1)
         size_a_entry.grid(row=7, column=1)
-        delay_entry.grid(row=8, column=1)
+        stop_entry.grid(row=8, column=1)
 
 
         separator = ttk.Separator(param_frame2, orient="horizontal")  # Горизонтальная полоса разделения
