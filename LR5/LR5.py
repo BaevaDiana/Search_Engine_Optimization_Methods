@@ -3,22 +3,23 @@ from tkinter import ttk
 from tkinter import scrolledtext
 import numpy as np
 import math
+from LR5.BeeAlgorithm import BeeAlgorithm
 
 
 def BeesAlgorithm(frame,root,ax,canvas):
 
         # Функция Розенброка для оптимизации
-        def rosenbrock_function(x, y):
+        def himel_function(x_arr):
+            x, y = x_arr[0], x_arr[1]
+            return (x ** 2 + y - 11) ** 2 + (x + y ** 2 - 7) ** 2
+
+        def rosenbrock_function(x_arr):
+            x, y = x_arr[0], x_arr[1]
             return (1 - x) ** 2 + 100 * (y - x ** 2) ** 2
 
-            # Функция Химмельблау
-        def himel_function(x, y):
-            return ((x ** 2 + y - 11) ** 2) + ((x + y ** 2 - 7) ** 2)
-
-        def rastrigin(*X):
-            A = 10
-            return A + sum([(x ** 2 - A * np.cos(2 * math.pi * x)) for x in X])
-
+        def rastrigin(x_arr):
+            size = len(x_arr)
+            return 10 * size + np.sum(x_arr ** 2 - 10 * np.cos(2 * np.pi * x_arr))
 
         def run_optimization():
             ax.cla()
@@ -31,23 +32,6 @@ def BeesAlgorithm(frame,root,ax,canvas):
             elif function_choice == "Функция Растригина":
                 target_func = rastrigin
 
-            # Генерация сетки для графика целевой функции
-            x_range = np.linspace(x_interval_min.get(), x_interval_max.get(), 100)
-            y_range = np.linspace(y_interval_min.get(), y_interval_max.get(), 100)
-            X, Y = np.meshgrid(x_range, y_range)
-            Z = target_func(X, Y)
-
-            # Построение поверхности графика целевой функции
-            ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.7)
-            ax.set_xlabel('X')
-            ax.set_ylabel('Y')
-            ax.set_zlabel('Z')
-            ax.set_xticks(np.arange(x_interval_min.get(), x_interval_max.get() + 1, x_axis_interval.get()))
-            ax.set_yticks(np.arange(y_interval_min.get(), y_interval_max.get() + 1, y_axis_interval.get()))
-            ax.set_title("Алгоритм градиентного спуска с постоянным шагом")
-            canvas.draw()
-            root.update()
-
 
 
             iterations=int(iteration.get())
@@ -59,72 +43,42 @@ def BeesAlgorithm(frame,root,ax,canvas):
             size_A = int(size_a.get())
             Delay = int(delay.get())
 
+            bound_start = float(x_interval_min.get())
+            bound_end = float(x_interval_max.get())
+            bounds = [(bound_start, bound_end) for i in range(2)]
 
-            #для записи результатов
-            results = []
-            results_text.config(state=tk.NORMAL)
-            results_text.delete(1.0, tk.END)
 
-            # for generation in range(num_generations):
-            #     # Расчет значений функции для текущей популяции
-            #     fitness_scores = np.array([rosenbrock_function(x, y) for x, y in population])
-            #
-            #     # Выбор лучших особей
-            #     selected_individuals = selection(population, fitness_scores)
-            #
-            #     # Оператор кроссовера и мутации
-            #     children = []
-            #     for i in range(0, population_size, 2):
-            #         child1 = crossover(selected_individuals[0], selected_individuals[1])
-            #         child2 = crossover(selected_individuals[1], selected_individuals[0])
-            #         child1 = mutate(child1, mutation_rate=0.1)  # Пример вероятности мутации
-            #         child2 = mutate(child2, mutation_rate=0.1)
-            #         children.extend([child1, child2])
-            #
+            x_range = np.linspace(bound_start, bound_end, 100)
+            y_range = np.linspace(bound_start, bound_end, 100)
+            X, Y = np.meshgrid(x_range, y_range)
+            Z = np.zeros_like(X)
+            for i in range(X.shape[0]):
+                for j in range(X.shape[1]):
+                    Z[i, j] = target_func(np.array([X[i, j], Y[i, j]]))
+
             ax.cla()
-            # Построение поверхности графика целевой функции
+            canvas.draw()
             ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.7)
             ax.set_xlabel('X')
             ax.set_ylabel('Y')
             ax.set_zlabel('Z')
-            ax.set_xticks(np.arange(x_interval_min.get(), x_interval_max.get() + 1, x_axis_interval.get()))
-            ax.set_yticks(np.arange(y_interval_min.get(), y_interval_max.get() + 1, y_axis_interval.get()))
-            ax.set_title("Генетический алгоритм")
-
-            #     for i in range(len(fitness_scores)):
-            #         best_individual = population[i]
-            #         ax.scatter(best_individual[0], best_individual[1], fitness_scores[i], color='red',
-            #                    s=10)
-            #
-            #     # Обновление популяции
-            #     population = np.array(children)
-            #
-            #     # Нахождение лучшей особи на текущей итерации
-            #     best_fitness = np.min(fitness_scores)
-            #     best_individual = population[np.argmin(fitness_scores)]
-            #
-            #     # Вывод лучшего решения на текущей итерации
-            #     print(f"Поколение {generation}: Лучшее решение - {best_individual}, Значение функции - {best_fitness}")
-            #
-            #     results.append((best_individual[0], best_individual[1], generation, best_fitness))
-            #     results_text.insert(tk.END,
-            #                         f"Поколение {generation}: Лучшее решение ({best_individual[0]:.2f}, {best_individual[1]:.2f}), Значение функции: {best_fitness:.7f}\n")
-            #     results_text.yview_moveto(1)
-            #     canvas.draw()
-            #     root.update()
+            ax.set_xticks(np.arange(bound_start, bound_end + 1, 2))
+            ax.set_yticks(np.arange(bound_start, bound_end + 1, 2))
 
 
-            # # Нахождение лучшего решения после всех итераций
-            # final_fitness_scores = np.array([rosenbrock_function(x, y) for x, y in population])
-            # best_index = np.argmin(final_fitness_scores)
-            # best_solution = population[best_index]
-            # best_fitness_value = final_fitness_scores[best_index]
-            #
-            # results_text.insert(tk.END,
-            #                     f"\nОптимизация завершена. Лучшее решение - {best_solution}, Значение функции - {best_fitness_value}")
-            # results_text.yview_moveto(1)
-            # ax.scatter(best_solution[0], best_solution[1], best_fitness_value, color='black', marker='x', s=60)
-            # results_text.config(state=tk.DISABLED)
+            results_text.config(state=tk.NORMAL)
+            results_text.delete(1.0, tk.END)
+            algorithm = BeeAlgorithm(scout, size_A, size_A, best_A, perspective_A,
+                                     perspective_B, best_B, bounds, iterations, 20,
+                                     target_func)
+            algorithm.set_options(root, ax, canvas, results_text)
+            best_bee = algorithm.optimize()
+            ax.scatter(best_bee.coords[0], best_bee.coords[1], best_bee.fitness, c="red")
+            results_text.insert(tk.END,
+                                f"Лучшее решение ({best_bee.coords[0]:.8f}, {best_bee.coords[1]:.8f}, {best_bee.fitness:.8f})\n")
+
+            canvas.draw()
+            root.update()
 
 
         param_frame2 = frame
@@ -222,4 +176,5 @@ def BeesAlgorithm(frame,root,ax,canvas):
         ttk.Label(param_frame2, text="Выполнение и результаты", font=("Helvetica", 12)).grid(row=20, column=0, pady=10)
         results_text = scrolledtext.ScrolledText(param_frame2, wrap=tk.WORD, height=18, width=40, padx=2, state=tk.DISABLED)
         results_text.grid(row=21, column=0, padx=10)
+        root.mainloop()
 
