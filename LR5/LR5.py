@@ -41,6 +41,7 @@ def BeesAlgorithm(frame,root,ax,canvas):
             perspective_A = int(perspective_a.get())
             best_A  = int(best_a.get())
             size_A = int(size_a.get())
+            stop_entry = int(stop.get())
 
             bound_start = float(x_interval_min.get())
             bound_end = float(x_interval_max.get())
@@ -59,7 +60,7 @@ def BeesAlgorithm(frame,root,ax,canvas):
             results_text.config(state=tk.NORMAL)
             results_text.delete(1.0, tk.END)
             algorithm = BeeAlgorithm(scout, size_A, size_A, best_A, perspective_A,
-                                     perspective_B, best_B, bounds, iterations, 20,
+                                     perspective_B, best_B, bounds, iterations, stop_entry,
                                      target_func)
             algorithm.set_options(root, ax, canvas, results_text,bound_start,bound_end,target_func)
             best_bee = algorithm.optimize()
