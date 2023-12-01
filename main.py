@@ -5,6 +5,8 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from LR1 import GradientDescentAlgorithm
 from LR2 import Simplex_method
 from LR3 import GeneticAlgorithm
+from LR4.particleswarm.LR4 import ParticleSwarmAlgorithm
+from LR5.LR5 import BeesAlgorithm
 
 
 # Создание окна приложения
@@ -24,24 +26,25 @@ canvas_widget.pack(side=tk.RIGHT, padx=20)
 # Вкладка для лр1
 param_frame = ttk.Frame(notebook,padding=(15, 0))
 notebook.add(param_frame, text="ЛР1")
-
 GradientDescentAlgorithm(param_frame,root,ax,canvas)
-
+# Вкладка для лр2
 param_frame2 = ttk.Frame(notebook)
 notebook.add(param_frame2, text="ЛР2")
-
 Simplex_method(param_frame2,root,ax,canvas)
-
+# Вкладка для лр3
 param_frame3 = ttk.Frame(notebook)
 notebook.add(param_frame3, text="ЛР3")
-
 GeneticAlgorithm(param_frame3,root,ax,canvas)
-
+# # Вкладка для лр4
 param_frame4 = ttk.Frame(notebook)
 notebook.add(param_frame4, text="ЛР4")
+ParticleSwarmAlgorithm(param_frame4,root,ax,canvas)
+
 
 param_frame5 = ttk.Frame(notebook)
 notebook.add(param_frame5, text="ЛР5")
+BeesAlgorithm(param_frame5,root,ax,canvas)
+
 
 param_frame6 = ttk.Frame(notebook)
 notebook.add(param_frame6, text="ЛР6")
