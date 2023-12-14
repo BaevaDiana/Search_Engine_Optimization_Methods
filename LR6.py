@@ -84,9 +84,9 @@ def ImmuneAlgorithm(frame,root,ax,canvas):
             ax.set_xlabel('X')
             ax.set_ylabel('Y')
             ax.set_zlabel('Z')
+            ax.set_title("Иммунный алгоритм")
             ax.set_xticks(np.arange(x_interval_min.get(), x_interval_max.get() + 1, x_axis_interval.get()))
             ax.set_yticks(np.arange(y_interval_min.get(), y_interval_max.get() + 1, y_axis_interval.get()))
-            ax.set_title("Иммунный алгоритм")
 
             ais = AIS(iter_number, antibodies_num, best_num, random_num, clones_num, mutation_coef,
                       [x_interval_min.get(), x_interval_max.get()], [y_interval_min.get(), y_interval_max.get()])
@@ -104,6 +104,7 @@ def ImmuneAlgorithm(frame,root,ax,canvas):
             ax.set_xlabel('X')
             ax.set_ylabel('Y')
             ax.set_zlabel('Z')
+            ax.set_title("Иммунный алгоритм")
             ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.7)
             canvas.draw()
 
@@ -144,6 +145,7 @@ def ImmuneAlgorithm(frame,root,ax,canvas):
                 ax.set_xlabel('X')
                 ax.set_ylabel('Y')
                 ax.set_zlabel('Z')
+                ax.set_title("Иммунный алгоритм")
                 ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.7)
                 canvas.draw()
 
