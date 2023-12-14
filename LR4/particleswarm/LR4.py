@@ -37,12 +37,7 @@ class Swarm_Rastrigin (Swarm):
 # бетта
 
 def printResult (swarm, iteration):
-    template = u"""Iteration: {iter}
-
-Best Position: {bestpos}
-Best Final Func: {finalfunc}
-----------------------------
-"""
+    template = u""" Лучшие координаты: {bestpos}\n Лучший результат: {finalfunc}\n\n"""
 
     result = template.format (iter = iteration,
             bestpos = swarm.globalBestPosition,
@@ -53,29 +48,9 @@ Best Final Func: {finalfunc}
 
 def ParticleSwarmAlgorithm(frame,root,ax,canvas):
 
-        # Функция Розенброка для оптимизации
         def rastrigin(*X):
             A = 10
             return A + sum([(x ** 2 - A * np.cos(2 * math.pi * x)) for x in X])
-
-        # # Оператор селекции (выбор лучших особей)
-        # def selection(population, fitness_scores):
-        #     # Выбираем двух наилучших особей
-        #     best_indices = np.argsort(fitness_scores)[:2]
-        #     return [population[i] for i in best_indices]
-        #
-        # # Оператор кроссовера (одноточечный кроссовер)
-        # def crossover(parent1, parent2):
-        #     crossover_point = np.random.randint(1, len(parent1))
-        #     child = np.hstack((parent1[:crossover_point], parent2[crossover_point:]))
-        #     return child
-        #
-        # # Оператор мутации
-        # def mutate(individual, mutation_rate):
-        #     mutation_indices = np.random.rand(len(individual)) < mutation_rate
-        #     individual[mutation_indices] += np.random.uniform(-0.5, 0.5)
-        #     return individual
-
 
         def run_optimization():
             # Генерация сетки для графика целевой функции
@@ -113,7 +88,7 @@ def ParticleSwarmAlgorithm(frame,root,ax,canvas):
             for n in range(iterCount):
                 ax.cla()
                 # Построение поверхности графика целевой функции
-                ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.7)
+                ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.5)
                 ax.set_xlabel('X')
                 ax.set_ylabel('Y')
                 ax.set_zlabel('Z')
@@ -121,20 +96,19 @@ def ParticleSwarmAlgorithm(frame,root,ax,canvas):
                 ax.set_yticks(np.arange(y_interval_min.get(), y_interval_max.get() + 1, y_axis_interval.get()))
                 ax.set_title("Алгоритм Роя Частиц")
 
-                # for i in range(len(fitness_scores)):
-                #     best_individual = population[i]
                 ax.scatter(swarm[0].position[0], swarm[0].position[1], swarm[0].position[2], color='red',
                                s=10)
-                # print("Position", swarm[0].position)
-                # print("Velocity", swarm[0].velocity)
-
-                # print(printResult(swarm, n))
 
                 results_text.insert(tk.END,
-                                    f"Position {swarm[0].position}")
+                                    f"Итерация {n}\n")
+
                 results_text.insert(tk.END,
-                                    f"Velocity {swarm[0].velocity}")
-                # ax.scatter(best_solution[0], best_solution[1], best_fitness_value, color='black', marker='x', s=60)
+                                    f"Позиция {swarm[0].position}\n")
+                results_text.insert(tk.END,
+                                    f"Скорость {swarm[0].velocity}\n")
+
+
+
                 results_text.insert(tk.END,printResult(swarm, n))
                 swarm.nextIteration()
                 results_text.yview_moveto(1)
@@ -142,29 +116,15 @@ def ParticleSwarmAlgorithm(frame,root,ax,canvas):
                 root.update()
 
 
-            # # Нахождение лучшего решения после всех итераций
-            # final_fitness_scores = np.array([rastrigin(x, y) for x, y in population])
-            # best_index = np.argmin(final_fitness_scores)
-            # best_solution = population[best_index]
-            # best_fitness_value = final_fitness_scores[best_index]
-            #
-            # results_text.insert(tk.END,
-            #                     f"\nОптимизация завершена. Лучшее решение - {best_solution}, Значение функции - {best_fitness_value}")
-            # results_text.yview_moveto(1)
-            # ax.scatter(best_solution[0], best_solution[1], best_fitness_value, color='black', marker='x', s=60)
-            # results_text.config(state=tk.DISABLED)
-
-
         param_frame2 = frame
 
         # Параметры задачи
         ttk.Label(param_frame2, text="Инициализация значений", font=("Helvetica", 12)).grid(row=0, column=0, pady=15)
-        ttk.Label(param_frame2, text="Частиц", font=("Helvetica", 10)).grid(row=1, column=0)
-        ttk.Label(param_frame2, text="Итераций", font=("Helvetica", 10)).grid(row=2, column=0)
+        ttk.Label(param_frame2, text="Частиц", font=("Helvetica", 10)).grid(row=2, column=0)
+        ttk.Label(param_frame2, text="Итераций", font=("Helvetica", 10)).grid(row=1, column=0)
         ttk.Label(param_frame2, text="Альфа", font=("Helvetica", 10)).grid(row=3, column=0)
         ttk.Label(param_frame2, text="Бета", font=("Helvetica", 10)).grid(row=4, column=0)
         ttk.Label(param_frame2, text="Инерция", font=("Helvetica", 10)).grid(row=5, column=0)
-        ttk.Label(param_frame2, text="Задержка", font=("Helvetica", 10)).grid(row=6, column=0)
 
         #частиц
         particle = tk.IntVar(value=2000)
@@ -172,21 +132,18 @@ def ParticleSwarmAlgorithm(frame,root,ax,canvas):
         alpha=tk.IntVar(value=2)
         beta=tk.IntVar(value=5)
         inertia=tk.DoubleVar(value=0.5)
-        delay=tk.DoubleVar(value=0.1)
 
         particle_entry = ttk.Entry(param_frame2, textvariable=particle)
         iteration_entry = ttk.Entry(param_frame2, textvariable=iteration)
         alpha_entry = ttk.Entry(param_frame2, textvariable=alpha)
         beta_entry = ttk.Entry(param_frame2, textvariable=beta)
         inertia_entry = ttk.Entry(param_frame2, textvariable=inertia)
-        delay_entry = ttk.Entry(param_frame2, textvariable=delay)
 
-        particle_entry.grid(row=1, column=1)
-        iteration_entry.grid(row=2, column=1)
+        particle_entry.grid(row=2, column=1)
+        iteration_entry.grid(row=1, column=1)
         alpha_entry.grid(row=3, column=1)
         beta_entry.grid(row=4, column=1)
         inertia_entry.grid(row=5, column=1)
-        delay_entry.grid(row=6, column=1)
 
 
         separator = ttk.Separator(param_frame2, orient="horizontal")  # Горизонтальная полоса разделения

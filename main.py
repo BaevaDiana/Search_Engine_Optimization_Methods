@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from LR1 import GradientDescentAlgorithm
 from LR2 import Simplex_method
-from LR3 import GeneticAlgorithm
+from LR3.LR3 import GeneticAlgorithm
 from LR4.particleswarm.LR4 import ParticleSwarmAlgorithm
 from LR5.LR5 import BeesAlgorithm
 from LR6 import ImmuneAlgorithm
