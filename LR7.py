@@ -2,73 +2,165 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import scrolledtext
 import numpy as np
-import math
+import random
+from operator import itemgetter
+import time
 
 
 def BFO(frame,root,ax,canvas):
-
         # Функция Розенброка для оптимизации
-        def himel_function(x_arr):
-            x, y = x_arr[0], x_arr[1]
-            return (x ** 2 + y - 11) ** 2 + (x + y ** 2 - 7) ** 2
+        def sphere(x, y):
+                return x ** 2 + y ** 2
 
-        def rosenbrock_function(x_arr):
-            x, y = x_arr[0], x_arr[1]
-            return (1 - x) ** 2 + 100 * (y - x ** 2) ** 2
+        class BFO:
+                def __init__(self, num_bacteries, chemotaxis_steps, num_to_eliminate,
+                             elimination_probability, x_range, y_range):
+                        self.num_bacteries = num_bacteries
+                        self.chemotaxis_steps = chemotaxis_steps
+                        self.num_to_eliminate = num_to_eliminate
+                        self.elimination_probability = elimination_probability
+                        self.x_range = x_range
+                        self.y_range = y_range
 
-        # def rastrigin(x_arr):
-        #     size = len(x_arr)
-        #     return 10 * size + np.sum(x_arr ** 2 - 10 * np.cos(2 * np.pi * x_arr))
-        #
-        # def run_optimization():
-        #     ax.cla()
-        #     function_choice = function_var.get()
-        #     target_func = himel_function
-        #     if function_choice == "Функция Химмельблау":
-        #         target_func = himel_function
-        #     elif function_choice == "Функция Розенброка":
-        #         target_func = rosenbrock_function
-        #     elif function_choice == "Функция Растригина":
-        #         target_func = rastrigin
-        #
-        #
-        #
-        #     iterations=int(iteration.get())
-        #     scout = int(scouts.get())  # разведчики
-        #     perspective_B = int(perspective_b.get())
-        #     best_B = int(best_b.get())  # лучшие пчелы
-        #     perspective_A = int(perspective_a.get())
-        #     best_A  = int(best_a.get())
-        #     size_A = int(size_a.get())
-        #     stop_entry = int(stop.get())
-        #
-        #     bound_start = float(x_interval_min.get())
-        #     bound_end = float(x_interval_max.get())
-        #     bounds = [(bound_start, bound_end) for i in range(2)]
-        #
-        #
-        #     x_range = np.linspace(bound_start, bound_end, 100)
-        #     y_range = np.linspace(bound_start, bound_end, 100)
-        #     X, Y = np.meshgrid(x_range, y_range)
-        #     Z = np.zeros_like(X)
-        #     for i in range(X.shape[0]):
-        #         for j in range(X.shape[1]):
-        #             Z[i, j] = target_func(np.array([X[i, j], Y[i, j]]))
-        #
-        #
-        #     results_text.config(state=tk.NORMAL)
-        #     results_text.delete(1.0, tk.END)
-        #     algorithm = BeeAlgorithm(scout, size_A, size_A, best_A, perspective_A,
-        #                              perspective_B, best_B, bounds, iterations, stop_entry,
-        #                              target_func)
-        #     algorithm.set_options(root, ax, canvas, results_text,bound_start,bound_end,target_func)
-        #     best_bee = algorithm.optimize()
-        #     ax.scatter(best_bee.coords[0], best_bee.coords[1], best_bee.fitness, c="red")
-        #     results_text.insert(tk.END,
-        #                         f"Лучшее решение ({best_bee.coords[0]:.8f}, {best_bee.coords[1]:.8f}, {best_bee.fitness:.8f})\n")
-        #
-        #     canvas.draw()
-        #     root.update()
+                        self.bacteries = [[random.uniform(self.x_range[0], self.x_range[1]),
+                                           random.uniform(self.y_range[0], self.y_range[1]),
+                                           0.0] for _ in range(self.num_bacteries)]
+                        for bacteria in self.bacteries:
+                                bacteria[2] = sphere(bacteria[0], bacteria[1])
+
+                        self.bacteria_best = min(self.bacteries, key=itemgetter(2))
+                        self.hp = [bacteria[2] for bacteria in self.bacteries]
+
+                def next_iteration(self):
+                        for i in range(self.num_bacteries):
+                                # хемотаксис
+                                for t in range(self.chemotaxis_steps):
+                                        step = np.random.uniform(-1, 1)
+                                        new_x = np.clip(self.bacteries[i][0] + step, self.x_range[0], self.x_range[1])
+                                        new_y = np.clip(self.bacteries[i][1] + step, self.y_range[0], self.y_range[1])
+
+                                        new_fitness = sphere(new_x, new_y)
+
+                                        if new_fitness < self.bacteries[i][2]:
+                                                self.bacteries[i][0] = new_x
+                                                self.bacteries[i][1] = new_y
+                                                self.bacteries[i][2] = new_fitness
+                                                # break
+
+                                # репродукция
+                                self.hp[i] += self.bacteries[i][2]
+
+                        # Сортировка бактерий в порядке возрастания состояний здоровья
+                        sorted_indices = np.argsort(self.hp)
+                        self.bacteries = [self.bacteries[i] for i in sorted_indices]
+                        self.hp = [self.hp[i] for i in sorted_indices]
+
+                        # Замена второй половины бактерий первой
+                        half_point = self.num_bacteries // 2
+                        self.bacteries[:half_point], self.bacteries[half_point:] = self.bacteries[
+                                                                                   half_point:], self.bacteries[
+                                                                                                 :half_point]
+                        self.hp[:half_point], self.hp[half_point:] = self.hp[half_point:], self.hp[:half_point]
+
+                        # Ликвидация и рассеивание
+                        indices_to_eliminate = np.random.choice(self.num_bacteries, size=self.num_to_eliminate,
+                                                                replace=False)
+                        for i in indices_to_eliminate:
+                                if np.random.rand() > self.elimination_probability:
+                                        self.bacteries[i] = [random.uniform(self.x_range[0], self.x_range[1]),
+                                                             random.uniform(self.y_range[0], self.y_range[1]),
+                                                             0]
+                                        self.bacteries[i][2] = sphere(self.bacteries[i][0], self.bacteries[i][1])
+
+                        self.bacteria_best = min(self.bacteries, key=itemgetter(2))
+
+        def run_optimization():
+
+                iter_number = iterations_var.get()
+                bacteries_number = bacteries_number_var.get()
+                steps_of_chemotaxis = chemotaxis_steps_var.get()
+                eliminate_number = num_to_eliminate_var.get()
+                elimination_prob = elimination_probability_var.get()
+                delay = delay_var.get()
+
+                # Генерация сетки для графика целевой функции
+                x_range = np.linspace(x_interval_min.get(), x_interval_max.get(), 100)
+                y_range = np.linspace(y_interval_min.get(), y_interval_max.get(), 100)
+                X, Y = np.meshgrid(x_range, y_range)
+                Z = sphere(X, Y)
+
+                ax.cla()
+                # Построение поверхности графика целевой функции
+                ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.7)
+                ax.set_xlabel('X')
+                ax.set_ylabel('Y')
+                ax.set_zlabel('Z')
+                ax.set_xticks(np.arange(x_interval_min.get(), x_interval_max.get() + 1, x_axis_interval.get()))
+                ax.set_yticks(np.arange(y_interval_min.get(), y_interval_max.get() + 1, y_axis_interval.get()))
+                ax.set_title("Иммунный алгоритм")
+
+                bfo = BFO(bacteries_number, steps_of_chemotaxis, eliminate_number, elimination_prob,
+                          [x_interval_min.get(), x_interval_max.get()], [y_interval_min.get(), y_interval_max.get()])
+
+                # отрисовка стартовой популяции
+                for bacteria in bfo.bacteries:
+                        ax.scatter(bacteria[0], bacteria[1], bacteria[2], c="red", s=10)
+
+                # ax.scatter(ais.antibody_best[0], ais.antibody_best[1], ais.antibody_best[2], c="blue")
+                canvas.draw()
+                root.update()
+
+                # очистка графика
+                ax.cla()
+                ax.set_xlabel('X')
+                ax.set_ylabel('Y')
+                ax.set_zlabel('Z')
+                ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.7)
+                canvas.draw()
+
+                cnt = 0
+                results_text.config(state=tk.NORMAL)
+                results_text.delete(1.0, tk.END)
+                # отрисовка промежуточной популяции и эволюция
+                for i in range(iter_number):
+                        bfo.next_iteration()
+                        for bacteria in bfo.bacteries:
+                                # отрисовка промежуточной популяции
+                                ax.scatter(bacteria[0], bacteria[1], bacteria[2], c="red", s=10)
+
+                        # ax.scatter(bfo.bacteria_best[0], bfo.bacteria_best[1], bfo.bacteria_best[2], c="blue")
+                        results_text.insert(tk.END,
+                                            f"Шаг {i}: Координаты ({bfo.bacteria_best[0]:.4f}, "
+                                            f"{bfo.bacteria_best[1]:.4f}),"
+                                            f" Значение функции: {bfo.bacteria_best[2]:.4f}\n")
+                        results_text.yview_moveto(1)
+
+                        canvas.draw()
+                        root.update()
+                        time.sleep(delay)
+
+                        # очистка графика
+                        ax.cla()
+                        ax.set_xlabel('X')
+                        ax.set_ylabel('Y')
+                        ax.set_zlabel('Z')
+                        ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.7)
+                        canvas.draw()
+
+                # отрисовка результирующей популяции
+                for bacteria in bfo.bacteries:
+                        ax.scatter(bacteria[0], bacteria[1], bacteria[2], c="red", s=10)
+
+                ax.scatter(bfo.bacteria_best[0], bfo.bacteria_best[1], bfo.bacteria_best[2], c='black', marker='x',
+                           s=60)
+
+                canvas.draw()
+                root.update()
+                results_text.insert(tk.END,
+                                    f"Результат:\nКоординаты ({bfo.bacteria_best[0]:.5f}, "
+                                    f"{bfo.bacteria_best[1]:.5f}),\nЗначение функции: {bfo.bacteria_best[2]:.8f}\n")
+                results_text.yview_moveto(1)
+                results_text.config(state=tk.DISABLED)
 
 
         param_frame2 = frame
@@ -110,8 +202,7 @@ def BFO(frame,root,ax,canvas):
         # Параметры функции
         ttk.Label(param_frame2, text="Функция и отображение ее графика", font=("Helvetica", 12)).grid(row=9, column=0, pady=10)
         ttk.Label(param_frame2, text="Выберите функцию", font=("Helvetica", 10)).grid(row=10, column=0)
-        function_choices = ["Нажмите для выбора","Функция Химмельблау", "Функция Розенброка",
-                        "Функция Растригина"]
+        function_choices = ["Функция сферы"]
         function_var = tk.StringVar(value=function_choices[0])
         function_menu = ttk.Combobox(param_frame2, textvariable=function_var, values=function_choices, width=22)
         function_menu.grid(row=10, column=1, pady=5)
@@ -151,8 +242,8 @@ def BFO(frame,root,ax,canvas):
         button_style.configure("My.TButton", font=("Helvetica", 14))
 
         # Создание кнопки Выполнить
-        # apply_settings_button = ttk.Button(param_frame2, text="Выполнить",command=run_optimization, style="My.TButton")
-        # apply_settings_button.grid(row=21, column=1, padx=10, pady=10)
+        apply_settings_button = ttk.Button(param_frame2, text="Выполнить",command=run_optimization, style="My.TButton")
+        apply_settings_button.grid(row=21, column=1, padx=10, pady=10)
 
         ttk.Label(param_frame2, text="Выполнение и результаты", font=("Helvetica", 12)).grid(row=18, column=0, pady=10)
         results_text = scrolledtext.ScrolledText(param_frame2, wrap=tk.WORD, height=16, width=40, padx=2, state=tk.DISABLED)
