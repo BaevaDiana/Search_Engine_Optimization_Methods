@@ -8,6 +8,7 @@ from LR3 import GeneticAlgorithm
 from LR4.particleswarm.LR4 import ParticleSwarmAlgorithm
 from LR5.LR5 import BeesAlgorithm
 from LR6 import ImmuneAlgorithm
+from LR7 import BFO
 
 
 # Создание окна приложения
@@ -51,6 +52,7 @@ ImmuneAlgorithm(param_frame6,root,ax,canvas)
 
 param_frame7 = ttk.Frame(notebook)
 notebook.add(param_frame7, text="ЛР7")
+BFO(param_frame7,root,ax,canvas)
 
 param_frame8 = ttk.Frame(notebook)
 notebook.add(param_frame8, text="ЛР8")

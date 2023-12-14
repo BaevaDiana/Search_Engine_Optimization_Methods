@@ -5,7 +5,7 @@ import numpy as np
 import math
 
 
-def ImmuneAlgorithm(frame,root,ax,canvas):
+def BFO(frame,root,ax,canvas):
 
         # Функция Розенброка для оптимизации
         def himel_function(x_arr):
@@ -75,42 +75,33 @@ def ImmuneAlgorithm(frame,root,ax,canvas):
 
         # Параметры задачи
         ttk.Label(param_frame2, text="Инициализация значений", font=("Helvetica", 12)).grid(row=0, column=0, pady=15)
-        ttk.Label(param_frame2, text="Итераций", font=("Helvetica", 10)).grid(row=1, column=0)
-        ttk.Label(param_frame2, text="Разведчики", font=("Helvetica", 10)).grid(row=2, column=0)
-        ttk.Label(param_frame2, text="Пчел в перспективном участке", font=("Helvetica", 10)).grid(row=3, column=0)
-        ttk.Label(param_frame2, text="Пчел в лучшем участке", font=("Helvetica", 10)).grid(row=4, column=0)
-        ttk.Label(param_frame2, text="Перспективных участков", font=("Helvetica", 10)).grid(row=5, column=0)
-        ttk.Label(param_frame2, text="Лучших участков", font=("Helvetica", 10)).grid(row=6, column=0)
-        ttk.Label(param_frame2, text="Размер участков", font=("Helvetica", 10)).grid(row=7, column=0)
-        ttk.Label(param_frame2, text="Критерий останова", font=("Helvetica", 10)).grid(row=8, column=0)
+        ttk.Label(param_frame2, text="Количество итераций", font=("Helvetica", 10)).grid(row=1, column=0)
+        ttk.Label(param_frame2, text="Количество бактерий", font=("Helvetica", 10)).grid(row=2, column=0)
+        ttk.Label(param_frame2, text="Шагов хемотаксиса", font=("Helvetica", 10)).grid(row=3, column=0)
+        ttk.Label(param_frame2, text="Количество ликвидируемых", font=("Helvetica", 10)).grid(row=4, column=0)
+        ttk.Label(param_frame2, text="Вероятность ликвидации", font=("Helvetica", 10)).grid(row=5, column=0)
+        ttk.Label(param_frame2, text="Задержка", font=("Helvetica", 10)).grid(row=6, column=0)
 
+        iterations_var = tk.IntVar(value=50)
+        bacteries_number_var = tk.IntVar(value=50)
+        chemotaxis_steps_var = tk.IntVar(value=15)
+        num_to_eliminate_var = tk.IntVar(value=20)
+        elimination_probability_var = tk.DoubleVar(value=0.6)
+        delay_var = tk.DoubleVar(value=0.01)
 
-        iteration = tk.IntVar(value=200)
-        scouts = tk.IntVar(value=20) #разведчики
-        perspective_b = tk.IntVar(value=10) #перспективных пчел
-        best_b = tk.IntVar(value=20) #лучшие пчелы
-        perspective_a  = tk.IntVar(value=3) #перпективных участков
-        best_a = tk.IntVar(value=1)  # лучших участков
-        size_a = tk.DoubleVar(value=0.5)  # размер участков
-        stop = tk.DoubleVar(value=20)  # задержка
+        iterations_entry = ttk.Entry(param_frame2, textvariable=iterations_var)
+        bacteries_number_entry = ttk.Entry(param_frame2, textvariable=bacteries_number_var)
+        chemotaxis_steps_entry = ttk.Entry(param_frame2, textvariable=chemotaxis_steps_var)
+        num_to_eliminate_entry = ttk.Entry(param_frame2, textvariable=num_to_eliminate_var)
+        elimination_probability_entry = ttk.Entry(param_frame2, textvariable=elimination_probability_var)
+        delay_entry = ttk.Entry(param_frame2, textvariable=delay_var)
 
-        iteration_entry = ttk.Entry(param_frame2, textvariable=iteration)
-        scouts_entry = ttk.Entry(param_frame2, textvariable=scouts)
-        perspective_b_entry = ttk.Entry(param_frame2, textvariable=perspective_b)
-        best_b_entry = ttk.Entry(param_frame2, textvariable=best_b)
-        perspective_a_entry = ttk.Entry(param_frame2, textvariable=perspective_a)
-        best_a_entry = ttk.Entry(param_frame2, textvariable=best_a)
-        size_a_entry = ttk.Entry(param_frame2, textvariable=size_a)
-        stop_entry = ttk.Entry(param_frame2, textvariable=stop)
-
-        iteration_entry.grid(row=1, column=1)
-        scouts_entry.grid(row=2, column=1)
-        perspective_b_entry.grid(row=3, column=1)
-        best_b_entry.grid(row=4, column=1)
-        perspective_a_entry.grid(row=5, column=1)
-        best_a_entry.grid(row=6, column=1)
-        size_a_entry.grid(row=7, column=1)
-        stop_entry.grid(row=8, column=1)
+        iterations_entry.grid(row=1, column=1)
+        bacteries_number_entry.grid(row=2, column=1)
+        chemotaxis_steps_entry.grid(row=3, column=1)
+        num_to_eliminate_entry.grid(row=4, column=1)
+        elimination_probability_entry.grid(row=5, column=1)
+        delay_entry.grid(row=6, column=1)
 
 
         separator = ttk.Separator(param_frame2, orient="horizontal")  # Горизонтальная полоса разделения
@@ -166,4 +157,5 @@ def ImmuneAlgorithm(frame,root,ax,canvas):
         ttk.Label(param_frame2, text="Выполнение и результаты", font=("Helvetica", 12)).grid(row=18, column=0, pady=10)
         results_text = scrolledtext.ScrolledText(param_frame2, wrap=tk.WORD, height=16, width=40, padx=2, state=tk.DISABLED)
         results_text.grid(row=21, column=0, padx=10)
+        root.mainloop()
 
