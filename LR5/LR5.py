@@ -41,6 +41,7 @@ def BeesAlgorithm(frame,root,ax,canvas):
             perspective_A = int(perspective_a.get())
             best_A  = int(best_a.get())
             size_A = int(size_a.get())
+            stop_entry = int(stop.get())
 
             bound_start = float(x_interval_min.get())
             bound_end = float(x_interval_max.get())
@@ -55,22 +56,13 @@ def BeesAlgorithm(frame,root,ax,canvas):
                 for j in range(X.shape[1]):
                     Z[i, j] = target_func(np.array([X[i, j], Y[i, j]]))
 
-            ax.cla()
-            canvas.draw()
-            ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.7)
-            ax.set_xlabel('X')
-            ax.set_ylabel('Y')
-            ax.set_zlabel('Z')
-            ax.set_xticks(np.arange(bound_start, bound_end + 1, 2))
-            ax.set_yticks(np.arange(bound_start, bound_end + 1, 2))
-
 
             results_text.config(state=tk.NORMAL)
             results_text.delete(1.0, tk.END)
             algorithm = BeeAlgorithm(scout, size_A, size_A, best_A, perspective_A,
-                                     perspective_B, best_B, bounds, iterations, 20,
+                                     perspective_B, best_B, bounds, iterations, stop_entry,
                                      target_func)
-            algorithm.set_options(root, ax, canvas, results_text)
+            algorithm.set_options(root, ax, canvas, results_text,bound_start,bound_end,target_func)
             best_bee = algorithm.optimize()
             ax.scatter(best_bee.coords[0], best_bee.coords[1], best_bee.fitness, c="red")
             results_text.insert(tk.END,
@@ -87,7 +79,7 @@ def BeesAlgorithm(frame,root,ax,canvas):
         ttk.Label(param_frame2, text="Итераций", font=("Helvetica", 10)).grid(row=1, column=0)
         ttk.Label(param_frame2, text="Разведчики", font=("Helvetica", 10)).grid(row=2, column=0)
         ttk.Label(param_frame2, text="Пчел в перспективном участке", font=("Helvetica", 10)).grid(row=3, column=0)
-        ttk.Label(param_frame2, text="Пчел в улчшем участке", font=("Helvetica", 10)).grid(row=4, column=0)
+        ttk.Label(param_frame2, text="Пчел в лучшем участке", font=("Helvetica", 10)).grid(row=4, column=0)
         ttk.Label(param_frame2, text="Перспективных участков", font=("Helvetica", 10)).grid(row=5, column=0)
         ttk.Label(param_frame2, text="Лучших участков", font=("Helvetica", 10)).grid(row=6, column=0)
         ttk.Label(param_frame2, text="Размер участков", font=("Helvetica", 10)).grid(row=7, column=0)
@@ -172,8 +164,8 @@ def BeesAlgorithm(frame,root,ax,canvas):
         apply_settings_button = ttk.Button(param_frame2, text="Выполнить",command=run_optimization, style="My.TButton")
         apply_settings_button.grid(row=21, column=1, padx=10, pady=10)
 
-        ttk.Label(param_frame2, text="Выполнение и результаты", font=("Helvetica", 12)).grid(row=20, column=0, pady=10)
-        results_text = scrolledtext.ScrolledText(param_frame2, wrap=tk.WORD, height=18, width=40, padx=2, state=tk.DISABLED)
+        ttk.Label(param_frame2, text="Выполнение и результаты", font=("Helvetica", 12)).grid(row=18, column=0, pady=10)
+        results_text = scrolledtext.ScrolledText(param_frame2, wrap=tk.WORD, height=16, width=40, padx=2, state=tk.DISABLED)
         results_text.grid(row=21, column=0, padx=10)
         root.mainloop()
 
