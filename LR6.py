@@ -151,7 +151,7 @@ def ImmuneAlgorithm(frame,root,ax,canvas):
             for antibody in ais.antibodies:
                 ax.scatter(antibody[0], antibody[1], antibody[2], c="red", s=10)
 
-            ax.scatter(ais.antibody_best[0], ais.antibody_best[1], ais.antibody_best[2], c='black', marker='x', s=10)
+            ax.scatter(ais.antibody_best[0], ais.antibody_best[1], ais.antibody_best[2], c='black', marker='x', s=60)
 
             canvas.draw()
             root.update()
