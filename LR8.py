@@ -5,7 +5,7 @@ import numpy as np
 import random
 from operator import itemgetter
 import time
-from Genetic import GeneticAlgorithm
+from LR3.Genetic import GeneticAlgorithm
 
 
 def PSO(frame,root,ax,canvas):
