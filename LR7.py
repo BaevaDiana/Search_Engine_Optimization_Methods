@@ -251,5 +251,5 @@ def BFO(frame,root,ax,canvas):
         ttk.Label(param_frame2, text="Выполнение и результаты", font=("Helvetica", 12)).grid(row=18, column=0, pady=10)
         results_text = scrolledtext.ScrolledText(param_frame2, wrap=tk.WORD, height=16, width=40, padx=2, state=tk.DISABLED)
         results_text.grid(row=21, column=0, padx=10)
-        root.mainloop()
+        # root.mainloop()
 
