@@ -9,6 +9,7 @@ from LR4.particleswarm.LR4 import ParticleSwarmAlgorithm
 from LR5.LR5 import BeesAlgorithm
 from LR6 import ImmuneAlgorithm
 from LR7 import BFO
+from LR8 import PSO
 
 
 # Создание окна приложения
@@ -56,5 +57,6 @@ BFO(param_frame7,root,ax,canvas)
 
 param_frame8 = ttk.Frame(notebook)
 notebook.add(param_frame8, text="ЛР8")
+PSO(param_frame8,root,ax,canvas)
 
 root.mainloop()
