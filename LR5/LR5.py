@@ -169,3 +169,4 @@ def BeesAlgorithm(frame,root,ax,canvas):
         results_text.grid(row=21, column=0, padx=10)
         # root.mainloop()
 
+
